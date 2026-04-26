@@ -2,6 +2,7 @@ import React from "react";
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 import { styles, colors } from "../styles";
 import { format, parseISO } from "date-fns";
+import { to12Hour } from "@/lib/utils";
 
 interface FoodEntryData {
   title: string;
@@ -28,8 +29,8 @@ interface DailyEntryData {
 }
 
 function journalTitle(userName: string): string {
-  if (!userName) return "Health Journal";
-  return `${userName}'s Health Journal`;
+  if (!userName) return "Daily Journal";
+  return `${userName}'s Daily Journal`;
 }
 
 export default function DailyEntryPDF({ data, userName = "" }: { data: DailyEntryData; userName?: string }) {
@@ -57,7 +58,7 @@ export default function DailyEntryPDF({ data, userName = "" }: { data: DailyEntr
           <Text style={styles.sectionTitle}>Food & Lifestyle Journal</Text>
           {/* Table header */}
           <View style={[styles.row, { borderBottomWidth: 1, borderBottomColor: colors.sage }]}>
-            <Text style={[styles.timeCell, { width: 80, fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>TITLE / TIME</Text>
+            <Text style={[styles.timeCell, { width: 80, fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>TIME</Text>
             <Text style={[styles.foodCell, { fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>DESCRIPTION</Text>
           </View>
           {/* Food entries */}
@@ -65,7 +66,7 @@ export default function DailyEntryPDF({ data, userName = "" }: { data: DailyEntr
             <View key={i} style={styles.row}>
               <View style={{ width: 80 }}>
                 {entry.title && <Text style={{ fontSize: 8, color: colors.brownMuted, fontFamily: "Helvetica-Bold" }}>{entry.title}</Text>}
-                <Text style={styles.timeCell}>{entry.entry_time || "--:--"}</Text>
+                <Text style={styles.timeCell}>{to12Hour(entry.entry_time)}</Text>
               </View>
               <Text style={styles.foodCell}>{entry.description || "-"}</Text>
             </View>
@@ -97,7 +98,7 @@ export default function DailyEntryPDF({ data, userName = "" }: { data: DailyEntr
           <View style={styles.inlineRow}>
             <View style={styles.inlineItem}>
               <Text style={styles.label}>Sleep Duration</Text>
-              <Text style={styles.value}>{data.sleep_from || "-"} — {data.sleep_to || "-"}</Text>
+              <Text style={styles.value}>{to12Hour(data.sleep_from)} — {to12Hour(data.sleep_to)}</Text>
             </View>
             <View style={styles.inlineItem}>
               <Text style={styles.label}>Quality</Text>
@@ -145,7 +146,7 @@ export default function DailyEntryPDF({ data, userName = "" }: { data: DailyEntr
 
         {/* Footer */}
         <Text style={styles.footer}>
-          Health Journal — Generated on {format(new Date(), "MMM d, yyyy")}
+          Daily Journal — Generated on {format(new Date(), "MMM d, yyyy")}
         </Text>
       </Page>
     </Document>

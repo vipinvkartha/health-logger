@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { isValidDateString } from "@/lib/utils";
+import { isValidDateString, stripSeconds } from "@/lib/utils";
 import { emptyJournalEntry, JournalEntry } from "@/lib/types";
 import AppShell from "@/components/ui/app-shell";
 import JournalForm from "@/components/journal/journal-form";
@@ -48,22 +48,22 @@ export default async function JournalPage({
       water_intake: entry.water_intake,
       alcohol_juices: entry.alcohol_juices || "",
       sugar: entry.sugar || "",
-      sleep_from: entry.sleep_from || "",
-      sleep_to: entry.sleep_to || "",
+      sleep_from: stripSeconds(entry.sleep_from),
+      sleep_to: stripSeconds(entry.sleep_to),
       sleep_quality: entry.sleep_quality || "",
       activity: entry.activity || "",
       stressors: entry.stressors || "",
       stress_reduction: entry.stress_reduction || "",
       quick_notes: entry.quick_notes || "",
-      wake_up_time: entry.wake_up_time || "",
-      bed_time: entry.bed_time || "",
+      wake_up_time: stripSeconds(entry.wake_up_time),
+      bed_time: stripSeconds(entry.bed_time),
       food_entries:
         foodEntries && foodEntries.length > 0
           ? foodEntries.map((fe) => ({
               id: fe.id,
               journal_entry_id: fe.journal_entry_id,
               title: fe.title || "",
-              entry_time: fe.entry_time || "",
+              entry_time: stripSeconds(fe.entry_time),
               description: fe.description || "",
               sort_order: fe.sort_order,
             }))

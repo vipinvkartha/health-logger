@@ -76,8 +76,8 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
       // Use Web Share API if available (works on mobile with WhatsApp)
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
-          title: "Health Journal Report",
-          text: "Here's my health journal report",
+          title: "Daily Journal Report",
+          text: "Here's my daily journal report",
           files: [file],
         });
       } else {
@@ -138,22 +138,20 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
         <div className="flex gap-3">
           <button
             onClick={() => setReportType("daily")}
-            className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all cursor-pointer ${
-              reportType === "daily"
+            className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all cursor-pointer ${reportType === "daily"
                 ? "bg-sage/15 border-sage/30 text-sage-dark"
                 : "border-rule text-brown-muted hover:bg-cream-dark/50"
-            }`}
+              }`}
           >
             <div className="text-base mb-0.5">Daily Entry</div>
             <div className="text-xs opacity-70">Single day journal as PDF</div>
           </button>
           <button
             onClick={() => setReportType("weekly")}
-            className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all cursor-pointer ${
-              reportType === "weekly"
+            className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all cursor-pointer ${reportType === "weekly"
                 ? "bg-sage/15 border-sage/30 text-sage-dark"
                 : "border-rule text-brown-muted hover:bg-cream-dark/50"
-            }`}
+              }`}
           >
             <div className="text-base mb-0.5">Summary Report</div>
             <div className="text-xs opacity-70">Weekly or monthly overview</div>
@@ -239,14 +237,14 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
           {downloading ? (
             <>
               <svg className="animate-spin" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="8" cy="8" r="6" strokeDasharray="30" strokeDashoffset="10"/>
+                <circle cx="8" cy="8" r="6" strokeDasharray="30" strokeDashoffset="10" />
               </svg>
               Generating...
             </>
           ) : (
             <>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 2v8M5 7l3 3 3-3M3 12h10"/>
+                <path d="M8 2v8M5 7l3 3 3-3M3 12h10" />
               </svg>
               Download PDF
             </>
@@ -261,14 +259,14 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
           {sharing ? (
             <>
               <svg className="animate-spin" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="8" cy="8" r="6" strokeDasharray="30" strokeDashoffset="10"/>
+                <circle cx="8" cy="8" r="6" strokeDasharray="30" strokeDashoffset="10" />
               </svg>
               Sharing...
             </>
           ) : (
             <>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8.05 1.5C4.41 1.5 1.44 4.44 1.44 8.05c0 1.15.31 2.27.88 3.26L1.5 14.5l3.28-.86a6.56 6.56 0 003.27.87c3.63 0 6.58-2.95 6.58-6.56S11.68 1.5 8.05 1.5zm3.83 9.1c-.16.46-.96.88-1.33.94-.35.05-.8.08-1.29-.08a11.83 11.83 0 01-1.85-.68c-2.17-1.07-3.5-3.3-3.6-3.45-.1-.15-.87-1.16-.87-2.22s.55-1.57.74-1.79c.2-.21.43-.27.57-.27h.41c.13 0 .31-.05.49.37.18.43.62 1.51.67 1.62.05.1.09.23.02.37-.07.14-.1.23-.2.35-.11.13-.22.28-.32.38-.1.1-.22.22-.09.43.12.21.55.91 1.19 1.47.82.72 1.5.95 1.72 1.05.21.1.34.09.46-.05.13-.15.54-.63.68-.84.15-.22.29-.18.49-.11.2.07 1.26.6 1.48.7.21.11.36.16.41.25.05.09.05.53-.12.99z"/>
+                <path d="M8.05 1.5C4.41 1.5 1.44 4.44 1.44 8.05c0 1.15.31 2.27.88 3.26L1.5 14.5l3.28-.86a6.56 6.56 0 003.27.87c3.63 0 6.58-2.95 6.58-6.56S11.68 1.5 8.05 1.5zm3.83 9.1c-.16.46-.96.88-1.33.94-.35.05-.8.08-1.29-.08a11.83 11.83 0 01-1.85-.68c-2.17-1.07-3.5-3.3-3.6-3.45-.1-.15-.87-1.16-.87-2.22s.55-1.57.74-1.79c.2-.21.43-.27.57-.27h.41c.13 0 .31-.05.49.37.18.43.62 1.51.67 1.62.05.1.09.23.02.37-.07.14-.1.23-.2.35-.11.13-.22.28-.32.38-.1.1-.22.22-.09.43.12.21.55.91 1.19 1.47.82.72 1.5.95 1.72 1.05.21.1.34.09.46-.05.13-.15.54-.63.68-.84.15-.22.29-.18.49-.11.2.07 1.26.6 1.48.7.21.11.36.16.41.25.05.09.05.53-.12.99z" />
               </svg>
               Share via WhatsApp
             </>

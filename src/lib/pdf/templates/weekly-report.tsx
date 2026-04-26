@@ -2,6 +2,7 @@ import React from "react";
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 import { styles, colors } from "../styles";
 import { format, parseISO } from "date-fns";
+import { to12Hour } from "@/lib/utils";
 
 interface DaySummary {
   entry_date: string;
@@ -79,7 +80,7 @@ export default function WeeklyReportPDF({ data, fromDate, toDate, userName = "" 
               <Text style={{ width: 50, fontSize: 10 }}>{day.weight ?? "-"}</Text>
               <Text style={{ width: 50, fontSize: 10 }}>{day.water_intake ?? "-"}L</Text>
               <Text style={{ width: 80, fontSize: 9 }}>
-                {day.sleep_from && day.sleep_to ? `${day.sleep_from}–${day.sleep_to}` : "-"}
+                {day.sleep_from && day.sleep_to ? `${to12Hour(day.sleep_from)}–${to12Hour(day.sleep_to)}` : "-"}
               </Text>
               <Text style={{ width: 60, fontSize: 9, color: colors.brownLight }}>
                 {day.sleep_quality || "-"}
