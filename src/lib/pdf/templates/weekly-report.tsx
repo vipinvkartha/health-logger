@@ -26,7 +26,12 @@ function avg(values: (number | null)[]): string {
   return (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(1);
 }
 
-export default function WeeklyReportPDF({ data, fromDate, toDate }: WeeklyReportProps) {
+function journalTitle(userName: string): string {
+  if (!userName) return "Weekly Report";
+  return `${userName}'s Weekly Report`;
+}
+
+export default function WeeklyReportPDF({ data, fromDate, toDate, userName = "" }: WeeklyReportProps & { userName?: string }) {
   const from = format(parseISO(fromDate), "MMM d");
   const to = format(parseISO(toDate), "MMM d, yyyy");
 
@@ -34,7 +39,7 @@ export default function WeeklyReportPDF({ data, fromDate, toDate }: WeeklyReport
     <Document>
       <Page size="A4" style={styles.page}>
         {/* Header */}
-        <Text style={styles.title}>Weekly Report</Text>
+        <Text style={styles.title}>{journalTitle(userName)}</Text>
         <Text style={styles.subtitle}>{from} — {to}</Text>
 
         {/* Summary cards */}

@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const userName: string = user.user_metadata?.full_name || "";
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get("type") || "daily";
   const from = searchParams.get("from");
@@ -47,7 +48,7 @@ export async function GET(request: NextRequest) {
       })),
     };
 
-    const buffer = await generateDailyPDF(pdfData);
+    const buffer = await generateDailyPDF(pdfData, userName);
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
       food_count: 0,
     }));
 
-    const buffer = await generateWeeklyPDF(summaryData, from, to);
+    const buffer = await generateWeeklyPDF(summaryData, from, to, userName);
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {

@@ -73,9 +73,11 @@ export default async function JournalPage({
     initialData = emptyJournalEntry(date);
   }
 
+  const userName = user.user_metadata?.full_name || "";
+
   return (
     <AppShell>
-      <JournalForm initialData={initialData} date={date} />
+      <JournalForm initialData={initialData} date={date} userName={userName} />
     </AppShell>
   );
 }

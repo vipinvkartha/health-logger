@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { JournalEntry, FoodEntry } from "@/lib/types";
 import SectionCard from "@/components/ui/section-card";
+import Toast from "@/components/ui/toast";
 import JournalHeader from "./journal-header";
 import FoodJournalTable from "./food-journal-table";
 import IntakeSection from "./intake-section";
@@ -14,25 +15,24 @@ import QuickNotesSection from "./quick-notes-section";
 interface JournalFormProps {
   initialData: JournalEntry;
   date: string;
+  userName?: string;
 }
 
-export default function JournalForm({ initialData, date }: JournalFormProps) {
+export default function JournalForm({ initialData, date, userName }: JournalFormProps) {
   const [data, setData] = useState<JournalEntry>(initialData);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const update = useCallback(
     <K extends keyof JournalEntry>(field: K, value: JournalEntry[K]) => {
       setData((prev) => ({ ...prev, [field]: value }));
-      setSaved(false);
     },
     []
   );
 
   async function handleSave() {
     setSaving(true);
-    setError(null);
+    setToast(null);
     try {
       const res = await fetch(`/api/journal/${date}`, {
         method: "PUT",
@@ -43,12 +43,11 @@ export default function JournalForm({ initialData, date }: JournalFormProps) {
         const body = await res.json();
         throw new Error(body.error || "Failed to save");
       }
-      const saved = await res.json();
-      setData((prev) => ({ ...prev, id: saved.id }));
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      const result = await res.json();
+      setData((prev) => ({ ...prev, id: result.id }));
+      setToast({ message: "Your journal entry has been saved successfully.", type: "success" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save");
+      setToast({ message: err instanceof Error ? err.message : "Failed to save", type: "error" });
     } finally {
       setSaving(false);
     }
@@ -60,6 +59,7 @@ export default function JournalForm({ initialData, date }: JournalFormProps) {
         date={date}
         weight={data.weight}
         onWeightChange={(v) => update("weight", v)}
+        userName={userName}
       />
 
       <div className="space-y-5">
@@ -124,18 +124,7 @@ export default function JournalForm({ initialData, date }: JournalFormProps) {
 
       {/* Save bar */}
       <div className="sticky bottom-0 mt-6 py-4 bg-cream/80 backdrop-blur-md border-t border-rule -mx-4 px-4">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
-          <div className="text-sm">
-            {error && <span className="text-terracotta-dark">{error}</span>}
-            {saved && (
-              <span className="text-sage-dark flex items-center gap-1">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 8l3.5 3.5L13 5"/>
-                </svg>
-                Saved
-              </span>
-            )}
-          </div>
+        <div className="flex items-center justify-end max-w-4xl mx-auto">
           <button
             onClick={handleSave}
             disabled={saving}
@@ -145,6 +134,16 @@ export default function JournalForm({ initialData, date }: JournalFormProps) {
           </button>
         </div>
       </div>
+
+      {/* Toast notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          duration={3500}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

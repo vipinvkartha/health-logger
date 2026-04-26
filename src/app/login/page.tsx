@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
@@ -24,7 +25,10 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: { full_name: name },
+        },
       });
       if (error) {
         setError(error.message);
@@ -73,6 +77,21 @@ export default function LoginPage() {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {isSignUp && (
+              <div>
+                <label className="block text-sm font-medium text-brown-light mb-1.5">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 bg-cream/50 border border-rule rounded-lg text-brown placeholder:text-brown-muted/50"
+                  placeholder="Your name"
+                />
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-brown-light mb-1.5">
                 Email

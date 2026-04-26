@@ -27,7 +27,12 @@ interface DailyEntryData {
   food_entries: FoodEntryData[];
 }
 
-export default function DailyEntryPDF({ data }: { data: DailyEntryData }) {
+function journalTitle(userName: string): string {
+  if (!userName) return "Health Journal";
+  return `${userName}'s Health Journal`;
+}
+
+export default function DailyEntryPDF({ data, userName = "" }: { data: DailyEntryData; userName?: string }) {
   const dateFormatted = format(parseISO(data.entry_date), "EEEE, MMMM d, yyyy");
 
   return (
@@ -36,7 +41,7 @@ export default function DailyEntryPDF({ data }: { data: DailyEntryData }) {
         {/* Header */}
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.title}>Health Journal</Text>
+            <Text style={styles.title}>{journalTitle(userName)}</Text>
             <Text style={styles.subtitle}>{dateFormatted}</Text>
           </View>
           {data.weight && (

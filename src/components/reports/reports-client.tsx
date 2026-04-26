@@ -17,33 +17,44 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
   const [fromDate, setFromDate] = useState(format(startOfWeek(new Date()), "yyyy-MM-dd"));
   const [toDate, setToDate] = useState(format(endOfWeek(new Date()), "yyyy-MM-dd"));
   const [downloading, setDownloading] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function buildParams() {
+    const params = new URLSearchParams({ type: reportType });
+    if (reportType === "daily") {
+      params.set("from", dailyDate);
+    } else {
+      params.set("from", fromDate);
+      params.set("to", toDate);
+    }
+    return params;
+  }
+
+  function getFilename(res: Response) {
+    return res.headers.get("Content-Disposition")?.split("filename=")[1]?.replace(/"/g, "") || "health-journal-report.pdf";
+  }
+
+  async function fetchPDF() {
+    const res = await fetch(`/api/pdf?${buildParams().toString()}`);
+    if (!res.ok) {
+      const body = await res.json();
+      throw new Error(body.error || "Failed to generate PDF");
+    }
+    const blob = await res.blob();
+    const filename = getFilename(res);
+    return { blob, filename };
+  }
 
   async function handleDownload() {
     setDownloading(true);
     setError(null);
-
     try {
-      const params = new URLSearchParams({ type: reportType });
-      if (reportType === "daily") {
-        params.set("from", dailyDate);
-      } else {
-        params.set("from", fromDate);
-        params.set("to", toDate);
-      }
-
-      const res = await fetch(`/api/pdf?${params.toString()}`);
-
-      if (!res.ok) {
-        const body = await res.json();
-        throw new Error(body.error || "Failed to generate PDF");
-      }
-
-      const blob = await res.blob();
+      const { blob, filename } = await fetchPDF();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = res.headers.get("Content-Disposition")?.split("filename=")[1]?.replace(/"/g, "") || "report.pdf";
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -52,6 +63,46 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
       setError(err instanceof Error ? err.message : "Failed to generate PDF");
     } finally {
       setDownloading(false);
+    }
+  }
+
+  async function handleShareWhatsApp() {
+    setSharing(true);
+    setError(null);
+    try {
+      const { blob, filename } = await fetchPDF();
+      const file = new File([blob], filename, { type: "application/pdf" });
+
+      // Use Web Share API if available (works on mobile with WhatsApp)
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: "Health Journal Report",
+          text: "Here's my health journal report",
+          files: [file],
+        });
+      } else {
+        // Fallback: download the file and open WhatsApp web
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // Open WhatsApp with a message (user attaches the downloaded file manually)
+        window.open(
+          `https://wa.me/?text=${encodeURIComponent("Here's my health journal report")}`,
+          "_blank"
+        );
+      }
+    } catch (err) {
+      // User cancelled share is not an error
+      if (err instanceof Error && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Failed to share");
+    } finally {
+      setSharing(false);
     }
   }
 
@@ -178,11 +229,11 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
         )}
       </SectionCard>
 
-      {/* Download */}
-      <div className="flex items-center gap-4">
+      {/* Download & Share */}
+      <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={handleDownload}
-          disabled={downloading}
+          disabled={downloading || sharing}
           className="px-6 py-2.5 bg-sage text-white rounded-lg font-medium hover:bg-sage-dark transition-colors disabled:opacity-50 cursor-pointer shadow-sm flex items-center gap-2"
         >
           {downloading ? (
@@ -201,6 +252,29 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
             </>
           )}
         </button>
+
+        <button
+          onClick={handleShareWhatsApp}
+          disabled={downloading || sharing}
+          className="px-5 py-2.5 bg-[#25D366] text-white rounded-lg font-medium hover:bg-[#1DA851] transition-colors disabled:opacity-50 cursor-pointer shadow-sm flex items-center gap-2"
+        >
+          {sharing ? (
+            <>
+              <svg className="animate-spin" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="8" cy="8" r="6" strokeDasharray="30" strokeDashoffset="10"/>
+              </svg>
+              Sharing...
+            </>
+          ) : (
+            <>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8.05 1.5C4.41 1.5 1.44 4.44 1.44 8.05c0 1.15.31 2.27.88 3.26L1.5 14.5l3.28-.86a6.56 6.56 0 003.27.87c3.63 0 6.58-2.95 6.58-6.56S11.68 1.5 8.05 1.5zm3.83 9.1c-.16.46-.96.88-1.33.94-.35.05-.8.08-1.29-.08a11.83 11.83 0 01-1.85-.68c-2.17-1.07-3.5-3.3-3.6-3.45-.1-.15-.87-1.16-.87-2.22s.55-1.57.74-1.79c.2-.21.43-.27.57-.27h.41c.13 0 .31-.05.49.37.18.43.62 1.51.67 1.62.05.1.09.23.02.37-.07.14-.1.23-.2.35-.11.13-.22.28-.32.38-.1.1-.22.22-.09.43.12.21.55.91 1.19 1.47.82.72 1.5.95 1.72 1.05.21.1.34.09.46-.05.13-.15.54-.63.68-.84.15-.22.29-.18.49-.11.2.07 1.26.6 1.48.7.21.11.36.16.41.25.05.09.05.53-.12.99z"/>
+              </svg>
+              Share via WhatsApp
+            </>
+          )}
+        </button>
+
         {error && <span className="text-sm text-terracotta-dark">{error}</span>}
       </div>
     </div>
