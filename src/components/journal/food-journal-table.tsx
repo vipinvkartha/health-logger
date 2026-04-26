@@ -25,7 +25,7 @@ export default function FoodJournalTable({ entries, onChange }: FoodJournalTable
   function handleAdd() {
     onChange([
       ...entries,
-      { entry_time: "", description: "", sort_order: entries.length },
+      { title: "", entry_time: "", description: "", sort_order: entries.length },
     ]);
   }
 
@@ -33,8 +33,8 @@ export default function FoodJournalTable({ entries, onChange }: FoodJournalTable
     <div>
       {/* Header */}
       <div className="flex items-center gap-3 px-2 pb-2 mb-1 border-b-2 border-sage/30">
-        <span className="w-24 shrink-0 text-xs font-semibold text-sage-dark uppercase tracking-wider">
-          Time
+        <span className="w-28 shrink-0 text-xs font-semibold text-sage-dark uppercase tracking-wider">
+          Title / Time
         </span>
         <div className="w-px h-4 bg-sage/30" />
         <span className="flex-1 text-xs font-semibold text-sage-dark uppercase tracking-wider">
@@ -49,8 +49,6 @@ export default function FoodJournalTable({ entries, onChange }: FoodJournalTable
             key={index}
             entry={entry}
             index={index}
-            isFirst={index === 0}
-            isLast={index === entries.length - 1}
             onChange={handleEntryChange}
             onRemove={handleRemove}
             canRemove={entries.length > 1}

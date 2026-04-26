@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
     const pdfData = {
       ...entry,
       food_entries: (foodEntries || []).map((fe) => ({
+        title: fe.title || "",
         entry_time: fe.entry_time || "",
         description: fe.description || "",
       })),

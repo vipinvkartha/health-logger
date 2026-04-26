@@ -85,15 +85,16 @@ export async function PUT(
 
   // Insert new food entries (filter out empty ones)
   const validFoodEntries = (food_entries || []).filter(
-    (fe: { entry_time: string; description: string }) =>
-      fe.entry_time || fe.description
+    (fe: { title: string; entry_time: string; description: string }) =>
+      fe.title || fe.entry_time || fe.description
   );
 
   if (validFoodEntries.length > 0) {
     const { error: foodError } = await supabase.from("food_entries").insert(
       validFoodEntries.map(
-        (fe: { entry_time: string; description: string; sort_order: number }, i: number) => ({
+        (fe: { title: string; entry_time: string; description: string; sort_order: number }, i: number) => ({
           journal_entry_id: entry.id,
+          title: fe.title || "",
           entry_time: fe.entry_time || "00:00",
           description: fe.description || "",
           sort_order: fe.sort_order ?? i,

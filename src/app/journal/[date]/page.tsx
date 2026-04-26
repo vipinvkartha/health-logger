@@ -62,11 +62,12 @@ export default async function JournalPage({
           ? foodEntries.map((fe) => ({
               id: fe.id,
               journal_entry_id: fe.journal_entry_id,
+              title: fe.title || "",
               entry_time: fe.entry_time || "",
               description: fe.description || "",
               sort_order: fe.sort_order,
             }))
-          : [{ entry_time: "", description: "", sort_order: 0 }],
+          : [{ title: "", entry_time: "", description: "", sort_order: 0 }],
     };
   } else {
     initialData = emptyJournalEntry(date);

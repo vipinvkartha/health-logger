@@ -25,6 +25,7 @@ CREATE TABLE journal_entries (
 CREATE TABLE food_entries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   journal_entry_id UUID REFERENCES journal_entries(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL DEFAULT '',
   entry_time TIME NOT NULL,
   description TEXT NOT NULL,
   sort_order INTEGER NOT NULL DEFAULT 0,

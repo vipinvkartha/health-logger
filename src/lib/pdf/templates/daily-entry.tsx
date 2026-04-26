@@ -4,6 +4,7 @@ import { styles, colors } from "../styles";
 import { format, parseISO } from "date-fns";
 
 interface FoodEntryData {
+  title: string;
   entry_time: string;
   description: string;
 }
@@ -51,30 +52,19 @@ export default function DailyEntryPDF({ data }: { data: DailyEntryData }) {
           <Text style={styles.sectionTitle}>Food & Lifestyle Journal</Text>
           {/* Table header */}
           <View style={[styles.row, { borderBottomWidth: 1, borderBottomColor: colors.sage }]}>
-            <Text style={[styles.timeCell, { fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>TIME</Text>
+            <Text style={[styles.timeCell, { width: 80, fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>TITLE / TIME</Text>
             <Text style={[styles.foodCell, { fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>DESCRIPTION</Text>
           </View>
-          {/* Wake up time */}
-          {data.wake_up_time && (
-            <View style={styles.row}>
-              <Text style={styles.timeCell}>{data.wake_up_time}</Text>
-              <Text style={[styles.foodCell, { color: colors.brownMuted, fontStyle: "italic" }]}>Wake up</Text>
-            </View>
-          )}
           {/* Food entries */}
           {data.food_entries.map((entry, i) => (
             <View key={i} style={styles.row}>
-              <Text style={styles.timeCell}>{entry.entry_time || "--:--"}</Text>
+              <View style={{ width: 80 }}>
+                {entry.title && <Text style={{ fontSize: 8, color: colors.brownMuted, fontFamily: "Helvetica-Bold" }}>{entry.title}</Text>}
+                <Text style={styles.timeCell}>{entry.entry_time || "--:--"}</Text>
+              </View>
               <Text style={styles.foodCell}>{entry.description || "-"}</Text>
             </View>
           ))}
-          {/* Bed time */}
-          {data.bed_time && (
-            <View style={styles.row}>
-              <Text style={styles.timeCell}>{data.bed_time}</Text>
-              <Text style={[styles.foodCell, { color: colors.brownMuted, fontStyle: "italic" }]}>Bed time</Text>
-            </View>
-          )}
         </View>
 
         {/* Intake */}

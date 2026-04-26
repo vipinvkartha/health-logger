@@ -1,6 +1,7 @@
 export interface FoodEntry {
   id?: string;
   journal_entry_id?: string;
+  title: string;
   entry_time: string; // HH:mm format
   description: string;
   sort_order: number;
@@ -50,6 +51,7 @@ export interface JournalEntryDB {
 export interface FoodEntryDB {
   id: string;
   journal_entry_id: string;
+  title: string;
   entry_time: string;
   description: string;
   sort_order: number;
@@ -73,7 +75,7 @@ export function emptyJournalEntry(date: string): JournalEntry {
     wake_up_time: "",
     bed_time: "",
     food_entries: [
-      { entry_time: "", description: "", sort_order: 0 },
+      { title: "", entry_time: "", description: "", sort_order: 0 },
     ],
   };
 }

@@ -5,8 +5,6 @@ import { FoodEntry } from "@/lib/types";
 interface FoodEntryRowProps {
   entry: FoodEntry;
   index: number;
-  isFirst: boolean;
-  isLast: boolean;
   onChange: (index: number, field: keyof FoodEntry, value: string) => void;
   onRemove: (index: number) => void;
   canRemove: boolean;
@@ -15,42 +13,38 @@ interface FoodEntryRowProps {
 export default function FoodEntryRow({
   entry,
   index,
-  isFirst,
-  isLast,
   onChange,
   onRemove,
   canRemove,
 }: FoodEntryRowProps) {
   return (
     <div className="lined-row group flex items-center gap-3 py-2.5 px-2">
-      {/* Time label or input */}
-      <div className="w-24 shrink-0">
-        {isFirst ? (
-          <span className="text-xs font-medium text-brown-muted uppercase tracking-wider">
-            Wake up
-          </span>
-        ) : isLast ? (
-          <span className="text-xs font-medium text-brown-muted uppercase tracking-wider">
-            Bed time
-          </span>
-        ) : null}
+      {/* Title */}
+      <div className="w-28 shrink-0">
+        <input
+          type="text"
+          value={entry.title}
+          onChange={(e) => onChange(index, "title", e.target.value)}
+          placeholder="e.g., Breakfast"
+          className="w-full bg-transparent border-none text-xs font-medium text-brown-muted uppercase tracking-wider p-0 focus:ring-0 focus:shadow-none placeholder:text-brown-muted/30 placeholder:normal-case placeholder:tracking-normal placeholder:font-normal"
+        />
         <input
           type="time"
           value={entry.entry_time}
           onChange={(e) => onChange(index, "entry_time", e.target.value)}
-          className="w-full bg-transparent border-none text-sm text-brown placeholder:text-brown-muted/40 p-0 focus:ring-0 focus:shadow-none"
+          className="w-full bg-transparent border-none text-sm text-brown placeholder:text-brown-muted/40 p-0 mt-0.5 focus:ring-0 focus:shadow-none"
         />
       </div>
 
       {/* Vertical divider */}
-      <div className="w-px h-8 bg-rule self-center" />
+      <div className="w-px h-10 bg-rule self-center" />
 
       {/* Description */}
       <input
         type="text"
         value={entry.description}
         onChange={(e) => onChange(index, "description", e.target.value)}
-        placeholder={isFirst ? "Morning routine, breakfast..." : isLast ? "Evening routine, dinner..." : "What did you eat or drink?"}
+        placeholder="What did you eat or drink?"
         className="flex-1 bg-transparent border-none text-sm text-brown placeholder:text-brown-muted/40 p-0 focus:ring-0 focus:shadow-none"
       />
 
