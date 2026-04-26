@@ -1,3 +1,5 @@
+export type SleepQuality = "poor" | "fair" | "good";
+
 export interface FoodEntry {
   id?: string;
   journal_entry_id?: string;
@@ -17,7 +19,7 @@ export interface JournalEntry {
   sugar: string;
   sleep_from: string; // HH:mm format
   sleep_to: string; // HH:mm format
-  sleep_quality: string;
+  sleep_quality: SleepQuality | null;
   activity: string;
   stressors: string;
   stress_reduction: string;
@@ -37,7 +39,7 @@ export interface JournalEntryDB {
   sugar: string | null;
   sleep_from: string | null;
   sleep_to: string | null;
-  sleep_quality: string | null;
+  sleep_quality: SleepQuality | null;
   activity: string | null;
   stressors: string | null;
   stress_reduction: string | null;
@@ -67,7 +69,7 @@ export function emptyJournalEntry(date: string): JournalEntry {
     sugar: "",
     sleep_from: "",
     sleep_to: "",
-    sleep_quality: "",
+    sleep_quality: null,
     activity: "",
     stressors: "",
     stress_reduction: "",

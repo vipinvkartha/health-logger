@@ -9,7 +9,7 @@ CREATE TABLE journal_entries (
   sugar TEXT,
   sleep_from TIME,
   sleep_to TIME,
-  sleep_quality TEXT,
+  sleep_quality TEXT CHECK (sleep_quality IN ('poor', 'fair', 'good')),
   activity TEXT,
   stressors TEXT,
   stress_reduction TEXT,

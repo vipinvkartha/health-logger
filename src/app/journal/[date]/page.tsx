@@ -50,7 +50,7 @@ export default async function JournalPage({
       sugar: entry.sugar || "",
       sleep_from: stripSeconds(entry.sleep_from),
       sleep_to: stripSeconds(entry.sleep_to),
-      sleep_quality: entry.sleep_quality || "",
+      sleep_quality: entry.sleep_quality || null,
       activity: entry.activity || "",
       stressors: entry.stressors || "",
       stress_reduction: entry.stress_reduction || "",
