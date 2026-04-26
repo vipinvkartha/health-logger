@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Warm journal palette */
+  --color-cream: #FDF6EC;
+  --color-cream-dark: #F5EBD8;
+  --color-parchment: #FAF0E4;
+  --color-brown: #5C4033;
+  --color-brown-light: #8B6F5E;
+  --color-brown-muted: #A89282;
+  --color-sage: #A3B18A;
+  --color-sage-dark: #7D8B6A;
+  --color-sage-light: #C5D1AF;
+  --color-terracotta: #C68B59;
+  --color-terracotta-light: #DEBA9A;
+  --color-terracotta-dark: #A86F3E;
+  --color-rule: #E2D5C3;
+  --color-rule-dark: #CFC0AC;
+
+  /* Fonts */
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+}
+
+/* Paper grain texture */
+@layer base {
+  body {
+    background-color: #FDF6EC;
+    color: #5C4033;
+    font-family: var(--font-body);
+  }
+}
+
+/* Lined paper effect for food table rows */
+.lined-row {
+  background-image: linear-gradient(to bottom, transparent calc(100% - 1px), #E2D5C3 calc(100% - 1px));
+  background-size: 100% 100%;
+}
+
+/* Paper texture overlay */
+.paper-texture {
+  position: relative;
+}
+.paper-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Smooth transitions for interactive elements */
+input, textarea, select, button {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #A3B18A;
+  box-shadow: 0 0 0 3px rgba(163, 177, 138, 0.2);
+}
+
+/* Custom scrollbar for the journal aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF0E4;
+}
+::-webkit-scrollbar-thumb {
+  background: #CFC0AC;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A89282;
+}
+
+/* Stagger animation for section cards */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-section {
+  animation: fadeSlideUp 0.4s ease-out both;
+}
