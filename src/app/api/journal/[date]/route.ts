@@ -92,11 +92,12 @@ export async function PUT(
   if (validFoodEntries.length > 0) {
     const { error: foodError } = await supabase.from("food_entries").insert(
       validFoodEntries.map(
-        (fe: { title: string; entry_time: string; description: string; sort_order: number }, i: number) => ({
+        (fe: { title: string; entry_time: string; description: string; hunger_level: string; sort_order: number }, i: number) => ({
           journal_entry_id: entry.id,
           title: fe.title || "",
           entry_time: fe.entry_time || "00:00",
           description: fe.description || "",
+          hunger_level: fe.hunger_level || "",
           sort_order: fe.sort_order ?? i,
         })
       )

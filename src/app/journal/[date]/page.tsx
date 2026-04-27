@@ -65,9 +65,10 @@ export default async function JournalPage({
               title: fe.title || "",
               entry_time: stripSeconds(fe.entry_time),
               description: fe.description || "",
+              hunger_level: fe.hunger_level || "",
               sort_order: fe.sort_order,
             }))
-          : [{ title: "", entry_time: "", description: "", sort_order: 0 }],
+          : [{ title: "", entry_time: "", description: "", hunger_level: "", sort_order: 0 }],
     };
   } else {
     initialData = emptyJournalEntry(date);

@@ -8,6 +8,7 @@ interface FoodEntryData {
   title: string;
   entry_time: string;
   description: string;
+  hunger_level: string;
 }
 
 interface DailyEntryData {
@@ -60,6 +61,7 @@ export default function DailyEntryPDF({ data, userName = "" }: { data: DailyEntr
           <View style={[styles.row, { borderBottomWidth: 1, borderBottomColor: colors.sage }]}>
             <Text style={[styles.timeCell, { width: 80, fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>TIME</Text>
             <Text style={[styles.foodCell, { fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>DESCRIPTION</Text>
+            <Text style={[{ width: 60, fontFamily: "Helvetica-Bold", fontSize: 8, color: colors.sageDark }]}>HUNGER</Text>
           </View>
           {/* Food entries */}
           {data.food_entries.map((entry, i) => (
@@ -69,6 +71,7 @@ export default function DailyEntryPDF({ data, userName = "" }: { data: DailyEntr
                 <Text style={styles.timeCell}>{to12Hour(entry.entry_time)}</Text>
               </View>
               <Text style={styles.foodCell}>{entry.description || "-"}</Text>
+              <Text style={{ width: 60, fontSize: 9, color: colors.brownLight }}>{entry.hunger_level || "-"}</Text>
             </View>
           ))}
         </View>

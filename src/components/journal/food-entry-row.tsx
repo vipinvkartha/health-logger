@@ -19,7 +19,7 @@ export default function FoodEntryRow({
 }: FoodEntryRowProps) {
   return (
     <div className="lined-row group flex items-center gap-3 py-2.5 px-2">
-      {/* Title */}
+      {/* Title + Time */}
       <div className="w-28 shrink-0">
         <input
           type="text"
@@ -46,6 +46,18 @@ export default function FoodEntryRow({
         onChange={(e) => onChange(index, "description", e.target.value)}
         placeholder="What did you eat or drink?"
         className="flex-1 bg-transparent border-none text-sm text-brown placeholder:text-brown-muted/40 p-0 focus:ring-0 focus:shadow-none"
+      />
+
+      {/* Vertical divider */}
+      <div className="w-px h-10 bg-rule self-center" />
+
+      {/* Hunger Level */}
+      <input
+        type="text"
+        value={entry.hunger_level}
+        onChange={(e) => onChange(index, "hunger_level", e.target.value)}
+        placeholder="Hunger level"
+        className="w-24 shrink-0 bg-transparent border-none text-xs text-brown-muted p-0 focus:ring-0 focus:shadow-none placeholder:text-brown-muted/30"
       />
 
       {/* Remove button */}

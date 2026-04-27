@@ -25,7 +25,7 @@ export default function FoodJournalTable({ entries, onChange }: FoodJournalTable
   function handleAdd() {
     onChange([
       ...entries,
-      { title: "", entry_time: "", description: "", sort_order: entries.length },
+      { title: "", entry_time: "", description: "", hunger_level: "", sort_order: entries.length },
     ]);
   }
 
@@ -39,6 +39,10 @@ export default function FoodJournalTable({ entries, onChange }: FoodJournalTable
         <div className="w-px h-4 bg-sage/30" />
         <span className="flex-1 text-xs font-semibold text-sage-dark uppercase tracking-wider">
           Food & Lifestyle Journal
+        </span>
+        <div className="w-px h-4 bg-sage/30" />
+        <span className="w-24 shrink-0 text-xs font-semibold text-sage-dark uppercase tracking-wider">
+          Hunger
         </span>
       </div>
 

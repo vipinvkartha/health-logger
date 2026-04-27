@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
         title: fe.title || "",
         entry_time: fe.entry_time || "",
         description: fe.description || "",
+        hunger_level: fe.hunger_level || "",
       })),
     };
 
