@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { generateDailyPDF, generateWeeklyPDF } from "@/lib/pdf/generate";
+import { generateDailyImage, generateWeeklyImage } from "@/lib/report/generate";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
   }
 
   if (type === "daily") {
-    // Single day PDF
     const { data: entry } = await supabase
       .from("journal_entries")
       .select("*")
@@ -39,7 +38,7 @@ export async function GET(request: NextRequest) {
       .eq("journal_entry_id", entry.id)
       .order("sort_order", { ascending: true });
 
-    const pdfData = {
+    const reportData = {
       ...entry,
       food_entries: (foodEntries || []).map((fe) => ({
         title: fe.title || "",
@@ -49,12 +48,12 @@ export async function GET(request: NextRequest) {
       })),
     };
 
-    const buffer = await generateDailyPDF(pdfData, userName);
+    const buffer = await generateDailyImage(reportData, userName);
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="health-journal-${from}.pdf"`,
+        "Content-Type": "image/png",
+        "Content-Disposition": `attachment; filename="health-journal-${from}.png"`,
       },
     });
   }
@@ -76,17 +75,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "No entries found in this date range" }, { status: 404 });
     }
 
-    const summaryData = entries.map((e) => ({
-      ...e,
-      food_count: 0,
-    }));
-
-    const buffer = await generateWeeklyPDF(summaryData, from, to, userName);
+    const buffer = await generateWeeklyImage(entries, from, to, userName);
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="health-journal-weekly-${from}-to-${to}.pdf"`,
+        "Content-Type": "image/png",
+        "Content-Disposition": `attachment; filename="health-journal-weekly-${from}-to-${to}.png"`,
       },
     });
   }

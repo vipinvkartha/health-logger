@@ -27,7 +27,7 @@ export default async function ReportsPage() {
           Reports
         </h1>
         <p className="text-brown-muted text-sm mb-6">
-          Generate and download PDF reports from your journal data.
+          Generate and download image reports from your journal data.
         </p>
         <ReportsClient availableDates={dates} />
       </div>

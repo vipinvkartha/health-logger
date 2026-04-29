@@ -32,14 +32,14 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
   }
 
   function getFilename(res: Response) {
-    return res.headers.get("Content-Disposition")?.split("filename=")[1]?.replace(/"/g, "") || "health-journal-report.pdf";
+    return res.headers.get("Content-Disposition")?.split("filename=")[1]?.replace(/"/g, "") || "health-journal-report.png";
   }
 
   async function fetchPDF() {
     const res = await fetch(`/api/pdf?${buildParams().toString()}`);
     if (!res.ok) {
       const body = await res.json();
-      throw new Error(body.error || "Failed to generate PDF");
+      throw new Error(body.error || "Failed to generate report");
     }
     const blob = await res.blob();
     const filename = getFilename(res);
@@ -60,7 +60,7 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate PDF");
+      setError(err instanceof Error ? err.message : "Failed to generate report");
     } finally {
       setDownloading(false);
     }
@@ -71,7 +71,7 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
     setError(null);
     try {
       const { blob, filename } = await fetchPDF();
-      const file = new File([blob], filename, { type: "application/pdf" });
+      const file = new File([blob], filename, { type: "image/png" });
 
       // Use Web Share API if available (works on mobile with WhatsApp)
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
@@ -144,7 +144,7 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
               }`}
           >
             <div className="text-base mb-0.5">Daily Entry</div>
-            <div className="text-xs opacity-70">Single day journal as PDF</div>
+            <div className="text-xs opacity-70">Single day journal as image</div>
           </button>
           <button
             onClick={() => setReportType("weekly")}
@@ -246,7 +246,7 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M8 2v8M5 7l3 3 3-3M3 12h10" />
               </svg>
-              Download PDF
+              Download Image
             </>
           )}
         </button>
