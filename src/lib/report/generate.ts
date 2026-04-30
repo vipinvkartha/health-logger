@@ -6,6 +6,7 @@ import { weeklyReportMarkup, WeeklyDaySummary } from "./templates/weekly-report"
 const WIDTH = 1200;
 const DAILY_HEIGHT = 1600;
 const WEEKLY_HEIGHT = 1400;
+const SCALE = 2; // 2x for retina-quality crisp output
 
 async function loadFont(): Promise<ArrayBuffer> {
   // Use Google Fonts API to load a font
@@ -58,7 +59,7 @@ async function renderToImage(
   });
 
   const resvg = new Resvg(svg, {
-    fitTo: { mode: "width", value: width },
+    fitTo: { mode: "width", value: width * SCALE },
   });
   const pngData = resvg.render();
   return Buffer.from(pngData.asPng());
