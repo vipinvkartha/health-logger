@@ -71,13 +71,14 @@ export default function ReportsClient({ availableDates }: ReportsClientProps) {
     setError(null);
     try {
       const { blob, filename } = await fetchPDF();
-      const file = new File([blob], filename, { type: "image/png" });
+      // Use application/octet-stream so WhatsApp sends as document (no compression)
+      const file = new File([blob], filename, { type: "application/octet-stream" });
 
       // Use Web Share API if available (works on mobile with WhatsApp)
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
-          title: "Daily Journal Report",
-          text: "Here's my daily journal report",
+          title: "Health Journal Report",
+          text: "Here's my health journal report",
           files: [file],
         });
       } else {
