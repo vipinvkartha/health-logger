@@ -6,36 +6,49 @@ import { weeklyReportMarkup, WeeklyDaySummary } from "./templates/weekly-report"
 const WIDTH = 1200;
 const DAILY_HEIGHT = 1600;
 const WEEKLY_HEIGHT = 1400;
-const SCALE = 2; // 2x for retina-quality crisp output
+const SCALE = 3; // 3x for ultra-crisp output on all screens and WhatsApp
 
-async function loadFont(): Promise<ArrayBuffer> {
-  // Use Google Fonts API to load a font
-  const res = await fetch(
-    "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;600&display=swap"
-  );
-  const css = await res.text();
-
-  // Extract the first font URL from the CSS
-  const fontUrl = css.match(/src: url\(([^)]+)\)/)?.[1];
-  if (!fontUrl) {
-    // Fallback: fetch a known working font URL directly
-    const fallback = await fetch(
-      "https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3@latest/latin-400-normal.woff"
-    );
-    return fallback.arrayBuffer();
-  }
-
-  const fontRes = await fetch(fontUrl);
-  return fontRes.arrayBuffer();
+interface FontDef {
+  name: string;
+  url: string;
+  weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+  style: "normal";
 }
 
-let fontCache: ArrayBuffer | null = null;
+const FONT_DEFS: FontDef[] = [
+  {
+    name: "sans",
+    url: "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.woff",
+    weight: 400,
+    style: "normal",
+  },
+  {
+    name: "sans",
+    url: "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.woff",
+    weight: 600,
+    style: "normal",
+  },
+  {
+    name: "sans",
+    url: "https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.woff",
+    weight: 700,
+    style: "normal",
+  },
+];
 
-async function getFont(): Promise<ArrayBuffer> {
-  if (!fontCache) {
-    fontCache = await loadFont();
+let fontsCache: { name: string; data: ArrayBuffer; weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900; style: "normal" }[] | null = null;
+
+async function getFonts() {
+  if (!fontsCache) {
+    fontsCache = await Promise.all(
+      FONT_DEFS.map(async (def) => {
+        const res = await fetch(def.url);
+        const data = await res.arrayBuffer();
+        return { name: def.name, data, weight: def.weight, style: def.style };
+      })
+    );
   }
-  return fontCache;
+  return fontsCache;
 }
 
 async function renderToImage(
@@ -43,19 +56,12 @@ async function renderToImage(
   width: number,
   height: number
 ): Promise<Buffer> {
-  const fontData = await getFont();
+  const fonts = await getFonts();
 
   const svg = await satori(markup as React.ReactElement, {
     width,
     height,
-    fonts: [
-      {
-        name: "sans",
-        data: fontData,
-        weight: 400,
-        style: "normal",
-      },
-    ],
+    fonts,
   });
 
   const resvg = new Resvg(svg, {
