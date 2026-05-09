@@ -1,7 +1,9 @@
 "use client";
 
+import { useRef } from "react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { format, addDays, subDays, parseISO } from "date-fns";
 
 interface JournalHeaderProps {
@@ -15,6 +17,19 @@ export default function JournalHeader({ date, weight, onWeightChange, userName }
   const prevDate = format(subDays(parseISO(date), 1), "yyyy-MM-dd");
   const nextDate = format(addDays(parseISO(date), 1), "yyyy-MM-dd");
   const isToday = date === format(new Date(), "yyyy-MM-dd");
+  const router = useRouter();
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = e.target.value;
+    if (selected && selected !== date) {
+      router.push(`/journal/${selected}`);
+    }
+  }
+
+  function openDatePicker() {
+    dateInputRef.current?.showPicker();
+  }
 
   return (
     <div className="animate-section mb-6">
@@ -37,9 +52,40 @@ export default function JournalHeader({ date, weight, onWeightChange, userName }
                 <path d="M11 4l-5 5 5 5"/>
               </svg>
             </Link>
-            <h2 className="font-[family-name:var(--font-display)] text-xl sm:text-2xl text-brown">
+
+            {/* Clickable date that opens calendar */}
+            <button
+              onClick={openDatePicker}
+              className="font-[family-name:var(--font-display)] text-xl sm:text-2xl text-brown hover:text-sage-dark transition-colors cursor-pointer relative group"
+              title="Click to pick a date"
+            >
               {formatDate(date)}
-            </h2>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="inline-block ml-2 mb-0.5 opacity-40 group-hover:opacity-100 transition-opacity"
+              >
+                <rect x="2" y="3" width="12" height="11" rx="1.5"/>
+                <path d="M5 1v3M11 1v3M2 7h12"/>
+              </svg>
+            </button>
+
+            {/* Hidden native date input */}
+            <input
+              ref={dateInputRef}
+              type="date"
+              value={date}
+              onChange={handleDateChange}
+              className="absolute opacity-0 w-0 h-0 pointer-events-none"
+              tabIndex={-1}
+            />
+
             <Link
               href={`/journal/${nextDate}`}
               className="p-1 text-brown-muted hover:text-brown transition-colors"
