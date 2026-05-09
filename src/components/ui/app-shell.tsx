@@ -5,11 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { todayString } from "@/lib/utils";
 
-const navItems = [
-  { href: `/journal/${todayString()}`, label: "Today", icon: "edit" },
-  { href: "/history", label: "History", icon: "calendar" },
-  { href: "/reports", label: "Reports", icon: "file" },
-];
+function getNavItems() {
+  return [
+    { href: `/journal/${todayString()}`, label: "Today", icon: "edit" },
+    { href: "/history", label: "History", icon: "calendar" },
+    { href: "/reports", label: "Reports", icon: "file" },
+  ];
+}
 
 function NavIcon({ icon }: { icon: string }) {
   switch (icon) {
@@ -64,7 +66,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
 
           <nav className="flex items-center gap-1">
-            {navItems.map((item) => {
+            {getNavItems().map((item) => {
               const isActive =
                 pathname === item.href ||
                 (item.icon === "edit" && pathname.startsWith("/journal"));
