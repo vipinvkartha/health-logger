@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,17 +17,12 @@ export default function JournalHeader({ date, weight, onWeightChange, userName }
   const nextDate = format(addDays(parseISO(date), 1), "yyyy-MM-dd");
   const isToday = date === format(new Date(), "yyyy-MM-dd");
   const router = useRouter();
-  const dateInputRef = useRef<HTMLInputElement>(null);
 
   function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
     const selected = e.target.value;
     if (selected && selected !== date) {
       router.push(`/journal/${selected}`);
     }
-  }
-
-  function openDatePicker() {
-    dateInputRef.current?.showPicker();
   }
 
   return (
@@ -45,21 +39,19 @@ export default function JournalHeader({ date, weight, onWeightChange, userName }
           <div className="flex items-center gap-2 mb-1">
             <Link
               href={`/journal/${prevDate}`}
-              className="p-1 text-brown-muted hover:text-brown transition-colors"
+              className="p-1.5 text-brown-muted hover:text-brown transition-colors"
               title="Previous day"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M11 4l-5 5 5 5"/>
               </svg>
             </Link>
 
-            {/* Clickable date that opens calendar */}
-            <button
-              onClick={openDatePicker}
-              className="font-[family-name:var(--font-display)] text-xl sm:text-2xl text-brown hover:text-sage-dark transition-colors cursor-pointer relative group"
-              title="Click to pick a date"
-            >
-              {formatDate(date)}
+            {/* Date with overlaid native date input for reliable mobile support */}
+            <label className="relative cursor-pointer group">
+              <span className="font-[family-name:var(--font-display)] text-xl sm:text-2xl text-brown group-hover:text-sage-dark transition-colors">
+                {formatDate(date)}
+              </span>
               <svg
                 width="16"
                 height="16"
@@ -69,29 +61,27 @@ export default function JournalHeader({ date, weight, onWeightChange, userName }
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="inline-block ml-2 mb-0.5 opacity-40 group-hover:opacity-100 transition-opacity"
+                className="inline-block ml-2 mb-0.5 text-brown-muted opacity-50 group-hover:opacity-100 transition-opacity"
               >
                 <rect x="2" y="3" width="12" height="11" rx="1.5"/>
                 <path d="M5 1v3M11 1v3M2 7h12"/>
               </svg>
-            </button>
-
-            {/* Hidden native date input */}
-            <input
-              ref={dateInputRef}
-              type="date"
-              value={date}
-              onChange={handleDateChange}
-              className="absolute opacity-0 w-0 h-0 pointer-events-none"
-              tabIndex={-1}
-            />
+              {/* Native date input stretched over the label — invisible but tappable */}
+              <input
+                type="date"
+                value={date}
+                onChange={handleDateChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                style={{ fontSize: "16px" }}
+              />
+            </label>
 
             <Link
               href={`/journal/${nextDate}`}
-              className="p-1 text-brown-muted hover:text-brown transition-colors"
+              className="p-1.5 text-brown-muted hover:text-brown transition-colors"
               title="Next day"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 4l5 5-5 5"/>
               </svg>
             </Link>
